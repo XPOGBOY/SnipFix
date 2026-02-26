@@ -1,9 +1,8 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextResponse } from "next/server";
 
-const GEMINI_API_KEY = "AIzaSyBjMxQzaMP249qEt4p688EsyEcv3NTZtrA";
-
-const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+const api = process.env.GEMINI_API_KEY
+const genAI = new GoogleGenerativeAI(api);
 
 const LANGUAGE_NAMES = {
   javascript: "JavaScript",
