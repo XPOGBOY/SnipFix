@@ -2,7 +2,11 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextResponse } from "next/server";
 
 // PASTE YOUR KEY HERE
+<<<<<<< HEAD
 const GEMINI_API_KEY = "AIzaSyB8mGLekkORt7mIHgya6ialxkV6bgXPsx8";
+=======
+const GEMINI_API_KEY = "AIzaSyBjMxQzaMP249qEt4p688EsyEcv3NTZtrA";
+>>>>>>> 513d8d9 (Initial commit)
 
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 
@@ -28,7 +32,10 @@ export async function POST(req) {
     const { code, language = 'javascript' } = await req.json();
     const languageName = LANGUAGE_NAMES[language] || language;
     
+<<<<<<< HEAD
     // We use "gemini-1.5-flash" which is the most stable name
+=======
+>>>>>>> 513d8d9 (Initial commit)
     const model = genAI.getGenerativeModel({ 
       model: "gemini-2.5-flash",
       generationConfig: { 
