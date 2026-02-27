@@ -1,7 +1,24 @@
 "use client";
+
 import React, { useState, useEffect } from "react";
 import { Mail, Lock, User, Eye, EyeOff, LogIn } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+
+/* ===== ANIMATION VARIANTS ===== */
+
+const container = {
+  hidden: { opacity: 0, y: 40 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, staggerChildren: 0.12 },
+  },
+};
+
+const item = {
+  hidden: { opacity: 0, y: 30, scale: 0.96 },
+  show: { opacity: 1, y: 0, scale: 1 },
+};
 
 export default function LoginPage({ onAuthSuccess }) {
   const [isSignup, setIsSignup] = useState(false);
@@ -18,7 +35,7 @@ export default function LoginPage({ onAuthSuccess }) {
     setFormData((p) => ({ ...p, [name]: value }));
   };
 
-  /* ================= AUTH LOGIC ================= */
+  /* ===== AUTH ===== */
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -52,12 +69,7 @@ export default function LoginPage({ onAuthSuccess }) {
         "codeReviewerUsers",
         JSON.stringify([...users, newUser])
       );
-
-      localStorage.setItem(
-        "codeReviewerCurrentUser",
-        JSON.stringify(newUser)
-      );
-
+      localStorage.setItem("codeReviewerCurrentUser", JSON.stringify(newUser));
       onAuthSuccess(newUser);
     } else {
       const user = users.find(
@@ -71,24 +83,24 @@ export default function LoginPage({ onAuthSuccess }) {
         return;
       }
 
-      localStorage.setItem(
-        "codeReviewerCurrentUser",
-        JSON.stringify(user)
-      );
-
+      localStorage.setItem("codeReviewerCurrentUser", JSON.stringify(user));
       onAuthSuccess(user);
     }
   };
 
-    useEffect(() => {
-      isSignup ? document.title = "Signup | AI Code Reviewer" : document.title = "Login | AI Code Reviewer";
-    }, [isSignup]);
-
-  /* ================= UI ================= */
+  useEffect(() => {
+    document.title = isSignup
+      ? "Signup | AI Code Reviewer"
+      : "Login | AI Code Reviewer";
+  }, [isSignup]);
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center p-4">
-      
+    <motion.div
+      variants={container}
+      initial="hidden"
+      animate="show"
+      className="relative min-h-screen flex items-center justify-center p-4"
+    >
       {/* Background */}
       <div className="fixed inset-0 -z-10 bg-gradient-to-br from-white via-blue-50 to-indigo-100 overflow-hidden">
         <motion.div
@@ -103,24 +115,21 @@ export default function LoginPage({ onAuthSuccess }) {
         />
       </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md"
-      >
+      <div className="w-full max-w-md">
+
         {/* Header */}
         <div className="text-center mb-8">
-          <motion.h1 className="text-4xl font-bold text-gray-800 font-mono">
-            AI_CODE_REVIEWER
+          <motion.h1 variants={item} className="text-4xl font-bold text-gray-800 font-mono">
+            SnipFix
           </motion.h1>
-          <p className="text-gray-500 mt-2">
+          <motion.p variants={item} className="text-gray-500 mt-2">
             Review and improve your code with AI
-          </p>
+          </motion.p>
         </div>
 
         {/* Card */}
-        <div className="backdrop-blur-xl bg-white/60 border border-white/40 shadow-2xl rounded-2xl p-8">
-          
+        <motion.div variants={item} className="backdrop-blur-xl bg-white/60 border border-white/40 shadow-2xl rounded-2xl p-8">
+
           {/* Toggle */}
           <div className="relative flex bg-gray-100 rounded-xl p-1 mb-8 overflow-hidden">
             <motion.div
@@ -129,77 +138,62 @@ export default function LoginPage({ onAuthSuccess }) {
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
             />
 
-            <button
-              onClick={() => setIsSignup(false)}
-              className={`relative z-10 flex-1 py-2 font-semibold ${
-                !isSignup ? "text-gray-900" : "text-gray-400"
-              }`}
-            >
+            <button onClick={() => setIsSignup(false)} className={`relative z-10 flex-1 py-2 font-semibold ${!isSignup ? "text-gray-900" : "text-gray-400"}`}>
               Login
             </button>
-
-            <button
-              onClick={() => setIsSignup(true)}
-              className={`relative z-10 flex-1 py-2 font-semibold ${
-                isSignup ? "text-gray-900" : "text-gray-400"
-              }`}
-            >
+            <button onClick={() => setIsSignup(true)} className={`relative z-10 flex-1 py-2 font-semibold ${isSignup ? "text-gray-900" : "text-gray-400"}`}>
               Sign Up
             </button>
           </div>
 
-          {/* FORM */}
+          {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
-            
+
             <AnimatePresence>
               {isSignup && (
-                <motion.div initial={{ opacity:0,y:-10 }} animate={{opacity:1,y:0}} exit={{opacity:0}}>
+                <motion.div variants={item} initial={{ opacity:0,y:-10 }} animate={{opacity:1,y:0}} exit={{opacity:0}}>
                   <Input icon={<User size={18}/>} name="name" value={formData.name} onChange={handleInputChange} placeholder="Full name"/>
                 </motion.div>
               )}
             </AnimatePresence>
 
-            <Input icon={<Mail size={18}/>} name="email" value={formData.email} onChange={handleInputChange} placeholder="Email"/>
+            <motion.div variants={item}>
+              <Input icon={<Mail size={18}/>} name="email" value={formData.email} onChange={handleInputChange} placeholder="Email"/>
+            </motion.div>
 
-            <div className="relative">
-              <Input
-                icon={<Lock size={18}/>}
-                name="password"
-                type={showPassword?"text":"password"}
-                value={formData.password}
-                onChange={handleInputChange}
-                placeholder="Password"
-              />
+            <motion.div variants={item} className="relative">
+              <Input icon={<Lock size={18}/>} name="password" type={showPassword?"text":"password"} value={formData.password} onChange={handleInputChange} placeholder="Password"/>
               <button type="button" onClick={()=>setShowPassword(!showPassword)} className="absolute right-3 top-3 text-gray-500">
                 {showPassword ? <EyeOff size={18}/> : <Eye size={18}/>}
               </button>
-            </div>
+            </motion.div>
 
             <AnimatePresence>
               {isSignup && (
-                <motion.div initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}}>
+                <motion.div variants={item} initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}}>
                   <Input icon={<Lock size={18}/>} name="confirmPassword" type="password" value={formData.confirmPassword} onChange={handleInputChange} placeholder="Confirm password"/>
                 </motion.div>
               )}
             </AnimatePresence>
 
             <motion.button
-              type="submit"
+              variants={item}
               whileTap={{scale:0.95}}
               whileHover={{scale:1.02}}
+              type="submit"
               className="w-full mt-4 bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold py-3 rounded-xl flex items-center justify-center gap-2 shadow-lg"
             >
               <LogIn size={18}/>
               {isSignup ? "Create Account" : "Sign In"}
             </motion.button>
           </form>
-        </div>
+        </motion.div>
 
-        <p className="text-center text-gray-400 text-sm mt-6">
+        <motion.p variants={item} className="text-center text-gray-400 text-sm mt-6">
           Your data is stored locally
-        </p>
-      </motion.div>
-    </div>
+        </motion.p>
+      </div>
+    </motion.div>
   );
 }
 
